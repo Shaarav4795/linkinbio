@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shaarav4795</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="facicon.jpg">
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <div class="card" id="card">
+            <div class="card-top">
+                <h1 class="username">Shaarav4795</h1>
+                <p class="subtitle">I'm too young to die...</p>
+            </div>
+            <div class="card-bottom">
+                <div class="social-icons">
+                    <a href="https://discordapp.com/users/1255093948368687225" class="social-icon"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.xbox.com/en-AU/play/user/Shaarav4795" class="social-icon"><i class="fab fa-xbox"></i></a>
+                    <a href="https://github.com/Shaarav4795" class="social-icon"><i class="fab fa-github"></i></a>
+                    <a href="mailto:hi@shaarav.xyz" class="social-icon"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <audio id="bg-audio" loop preload="auto" muted>
+        <source src="moments.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        // Try to autoplay with muted audio first (following best practices)
+        window.addEventListener('load', function() {
+            const audio = document.getElementById('bg-audio');
+            
+            // Attempt autoplay with muted audio first
+            let playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log("Audio is playing muted");
+                        // Audio is playing, but it's muted
+                        // Now we'll unmute on first user interaction
+                    })
+                    .catch(error => {
+                        console.log("Muted autoplay failed: ", error);
+                        // If even muted autoplay fails, we'll try on user interaction
+                        setupInteractionListeners();
+                    });
+            } else {
+                // Promise is undefined (older browser), set up interaction listeners
+                setupInteractionListeners();
+            }
+            
+            function setupInteractionListeners() {
+                // Play on first interaction (click or key press)
+                const handleInteraction = () => {
+                    audio.muted = false; // Ensure audio is not muted for this attempt
+                    let interactionPlayPromise = audio.play();
+                    
+                    if (interactionPlayPromise !== undefined) {
+                        interactionPlayPromise
+                            .then(() => {
+                                console.log("Audio is playing after user interaction");
+                            })
+                            .catch(e => {
+                                console.log("Audio play failed after interaction: ", e);
+                            });
+                    } else {
+                        // Fallback for older browsers
+                        audio.play();
+                    }
+                    
+                    // Remove event listeners after first successful interaction
+                    window.removeEventListener('click', handleInteraction);
+                    window.removeEventListener('keydown', handleInteraction);
+                };
+                
+                window.addEventListener('click', handleInteraction);
+                window.addEventListener('keydown', handleInteraction);
+            }
+            
+            // If initial muted playback succeeded, unmute on first interaction
+            if (playPromise !== undefined) {
+                const unmuteOnInteraction = () => {
+                    audio.muted = false;
+                    window.removeEventListener('click', unmuteOnInteraction);
+                    window.removeEventListener('keydown', unmuteOnInteraction);
+                };
+                
+                window.addEventListener('click', unmuteOnInteraction);
+                window.addEventListener('keydown', unmuteOnInteraction);
+            }
+        });
+
+        const card = document.getElementById('card');
+        
+        // Set the initial idle state
+        card.style.transform = 'perspective(1000px) translateY(-10px)';
+        
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const deltaX = (x - centerX) / centerX;
+            const deltaY = (y - centerY) / centerY;
+            
+            const maxTilt = 10; // Maximum tilt in degrees
+            
+            card.style.transform = `perspective(1000px) rotateY(${deltaX * maxTilt}deg) rotateX(${deltaY * -maxTilt}deg) translateY(-10px)`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) translateY(-10px)';
+        });
+    </script>
+</body>
+</html>
